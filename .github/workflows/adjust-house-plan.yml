@@ -1,4 +1,4 @@
-name: Adjust house plan
+name: Adjust house plan v2
 on:
   push:
     branches: [master]
