@@ -1,0 +1,90 @@
+name: Adjust house plan
+on:
+  push:
+    branches: [master]
+permissions:
+  contents: write
+jobs:
+  adjust:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Adjust floor plan
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p = Path('户型.html')
+          s = p.read_text(encoding='utf-8')
+          pattern = r'(?s)\s*<!-- 楼梯间（带站台拐角，南北1m）2\.5m×4\.2m -->.*?(?=\s*<!-- 餐厅 5\.6m×4\.2m -->)'
+          stair1 = '''
+                        <!-- 楼梯间（最东北角，带站台拐角）2.5m×4.2m，右侧起步（顺时针） -->
+                        <rect x="1150" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="1275" y="55" class="stairs-label">站台拐角</text>
+                        <text x="1275" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <rect x="1150" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="1212" y="260" class="stairs-label">楼梯入口</text>
+                        <text x="1212" y="280" class="stairs-label">(东侧起步)</text>
+                        <text x="1212" y="310" class="room-size">1.25m×3.2m</text>
+                        <rect x="1275" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="1337" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="1337" y="280" class="stairs-label">(西侧)</text>
+                        <text x="1337" y="310" class="room-size">1.25m×3.2m</text>
+                        <path d="M 1212 430 L 1212 110" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 110 L 1212 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 10 L 1275 10 L 1337 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 10 L 1337 110" class="stairs-arrow" stroke-width="3"/>
+                        <line x1="1150" y1="110" x2="1400" y2="110" class="stairs-divider"/>
+                        <line x1="1275" y1="10" x2="1275" y2="430" class="stairs-divider"/>
+                        <path d="M 1275 10 L 1275 40" class="window" stroke-width="4"/>
+'''
+          s, n = re.subn(pattern, stair1, s, count=1)
+          assert n == 1
+          s = s.replace('''<rect x="490" y="10" width="560" height="420" class="room" data-room="餐厅"/>\n                        <text x="770" y="200" class="room-label">餐厅</text>\n                        <text x="770" y="220" class="room-size">5.6m×4.2m | 23.5㎡</text>''', '''<rect x="240" y="10" width="555" height="420" class="room" data-room="餐厅"/>\n                        <text x="517" y="200" class="room-label">餐厅</text>\n                        <text x="517" y="220" class="room-size">约5.55m×4.2m | 23.3㎡</text>''')
+          s = s.replace('''<rect x="1050" y="10" width="355" height="420" class="room" style="fill: #D1D5DB;" data-room="厨房"/>\n                        <text x="1227" y="200" class="room-label">厨房</text>\n                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>''', '''<rect x="795" y="10" width="355" height="420" class="room" style="fill: #D1D5DB;" data-room="厨房"/>\n                        <text x="972" y="200" class="room-label">厨房</text>\n                        <text x="972" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>''')
+          s = s.replace('''<path d="M 490 30 L 490 60" class="door"/>\n                        <text x="495" y="45" font-size="9" fill="#DC2626">→楼梯下</text>''', '')
+          s = s.replace('''<!-- 餐厅门：朝南靠近厨房侧（东侧） -->\n                        <path d="M 1020 430 L 1050 430" class="door"/>\n                        <!-- 厨房门：东侧 -->\n                        <path d="M 1050 215 L 1050 245" class="door"/>''', '''<!-- 餐厅门：最西侧 -->\n                        <path d="M 240 210 L 240 240" class="door"/>\n                        <text x="245" y="230" font-size="9" fill="#DC2626">餐厅门</text>\n                        <!-- 厨房门：东侧，紧邻楼梯 -->\n                        <path d="M 1150 210 L 1150 240" class="door"/>\n                        <text x="1145" y="230" font-size="9" fill="#DC2626" text-anchor="end">厨房门</text>''')
+          pattern = r'(?s)\s*<!-- 楼梯间（带站台拐角，南北1m，二层出口在东侧） -->.*?(?=\s*<!-- 客厅（北侧中部，延伸到走廊区域，后面用走廊盖住） -->)'
+          stair2 = '''
+                        <!-- 二层楼梯间（最东北角）2.5m×4.2m -->
+                        <rect x="1150" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="1275" y="55" class="stairs-label">站台拐角</text>
+                        <text x="1275" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <rect x="1150" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="1212" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="1212" y="280" class="stairs-label">(东侧)</text>
+                        <text x="1212" y="310" class="room-size">1.25m×3.2m</text>
+                        <rect x="1275" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="1337" y="260" class="stairs-label">楼梯出口</text>
+                        <text x="1337" y="280" class="stairs-label">(西侧)</text>
+                        <text x="1337" y="310" class="room-size">1.25m×3.2m</text>
+                        <path d="M 1337 430 L 1337 110" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 110 L 1337 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 10 L 1275 10 L 1212 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 10 L 1212 110" class="stairs-arrow" stroke-width="3"/>
+                        <line x1="1150" y1="110" x2="1400" y2="110" class="stairs-divider"/>
+                        <line x1="1275" y1="10" x2="1275" y2="430" class="stairs-divider"/>
+                        <path d="M 1275 10 L 1275 40" class="window" stroke-width="4"/>
+'''
+          s, n = re.subn(pattern, stair2, s, count=1)
+          assert n == 1
+          s = s.replace('''<rect x="490" y="10" width="560" height="580" class="room" data-room="客厅+走廊"/>\n                        <text x="770" y="280" class="room-label">客厅（开放式连接走廊）</text>\n                        <text x="770" y="300" class="room-size">5.6m×5.8m | 32.5㎡</text>''', '''<rect x="240" y="10" width="555" height="580" class="room" data-room="客厅+走廊"/>\n                        <text x="517" y="280" class="room-label">客厅（开放式连接走廊）</text>\n                        <text x="517" y="300" class="room-size">约5.55m×5.8m | 32.2㎡</text>''')
+          s = s.replace('''<rect x="1050" y="10" width="355" height="420" class="room" data-room="次卧3"/>\n                        <text x="1227" y="200" class="room-label">次卧3</text>\n                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>''', '''<rect x="795" y="10" width="355" height="420" class="room" data-room="次卧3"/>\n                        <text x="972" y="200" class="room-label">次卧3</text>\n                        <text x="972" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>''')
+          s = s.replace('一层：2卧+公卫+客餐厨+楼梯入口西侧', '一层：2卧+公卫+客餐厨+楼梯入口东侧')
+          s = s.replace('一层：</strong>2卧(卧室1+卧室2) + 公卫(干湿分离+推拉门) + 客厅(39.2㎡含走廊) + 餐厨 + 楼梯入口西侧', '一层：</strong>2卧(卧室1+卧室2) + 公卫(干湿分离+推拉门) + 客厅 + 餐厅 + 厨房 + 东北角楼梯')
+          s = s.replace('二层：</strong>4卧(主卧套房+次卧1+次卧3+次卧4) + 主卫(干湿分离+推拉门) + 开放式客厅 + 楼梯出口东侧', '二层：</strong>4卧(主卧套房+次卧1+次卧3+次卧4) + 主卫(干湿分离+推拉门) + 开放式客厅 + 东北角楼梯')
+          s = s.replace('一层：入口西侧→北站台→东侧上半', '一层：右侧（东侧）起步→北站台→左侧（西侧）上半')
+          s = s.replace('二层：西侧上半→北站台→东侧出口', '二层：东侧上半→北站台→西侧出口')
+          s = s.replace('西侧/东侧各 1.25m×3.2m = 4㎡（楼梯舒适）', '东侧/西侧各 1.25m×3.2m = 4㎡（楼梯舒适）')
+          s = s.replace('公卫2.3m×4.2m(干湿分离) + 楼梯2.5m×4.2m + 餐厅5.6m×4.2m + 厨房3.55m×4.2m', '公卫2.3m×4.2m + 餐厅约5.55m×4.2m + 厨房3.55m×4.2m + 东北角楼梯2.5m×4.2m')
+          s = s.replace('公卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 餐厅西侧门北侧靠北(通往楼梯下) + 餐厅南侧门靠东(厨房侧) + 厨房门东侧 + 卧室1门北侧靠东 + 卧室2门北侧靠西 + 入户门(南门中间)', '公卫门 + 洗澡间推拉玻璃门 + 餐厅最西侧门 + 厨房东侧门(楼梯旁) + 卧室门 + 入户门(南门中间)')
+          p.write_text(s, encoding='utf-8')
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 户型.html
+          git diff --cached --quiet && exit 0
+          git commit -m "调整楼梯至东北并优化餐厨门位"
+          git push
