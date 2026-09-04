@@ -97,7 +97,7 @@
         <div class="plan-display">
             <div class="plan-card">
                 <div class="plan-header">
-                    <div class="plan-title">一层：2卧+公卫+客餐厨+楼梯入口西侧</div>
+                    <div class="plan-title">一层：2卧+公卫+客餐厨+楼梯入口东侧</div>
                     <div class="plan-badge">详细尺寸版</div>
                 </div>
 
@@ -129,45 +129,35 @@
                         <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
                         <text x="120" y="245" font-size="9" fill="#2563EB">推拉门</text>
 
-                        <!-- 楼梯间（带站台拐角，南北1m）2.5m×4.2m -->
-                        <!-- 北站台（拐角平台，南北1m=100px） -->
-                        <rect x="240" y="10" width="250" height="100" class="stairs-platform"/>
-                        <text x="365" y="55" class="stairs-label">站台拐角</text>
-                        <text x="365" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <!-- 楼梯间（最东北角，保持原尺寸2.5m×4.2m，右侧起步顺时针） -->
+                        <rect x="1150" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="1275" y="55" class="stairs-label">站台拐角</text>
+                        <text x="1275" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <rect x="1150" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="1212" y="260" class="stairs-label">楼梯入口</text>
+                        <text x="1212" y="280" class="stairs-label">(东侧起步)</text>
+                        <text x="1212" y="310" class="room-size">1.25m×3.2m</text>
+                        <rect x="1275" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="1337" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="1337" y="280" class="stairs-label">(西侧)</text>
+                        <text x="1337" y="310" class="room-size">1.25m×3.2m</text>
+                        <path d="M 1212 430 L 1212 110" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 110 L 1212 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 10 L 1275 10 L 1337 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 10 L 1337 110" class="stairs-arrow" stroke-width="3"/>
+                        <line x1="1150" y1="110" x2="1400" y2="110" class="stairs-divider"/>
+                        <line x1="1275" y1="10" x2="1275" y2="430" class="stairs-divider"/>
+                        <path d="M 1275 10 L 1275 40" class="window" stroke-width="4"/>
 
-                        <!-- 西侧入口（下半层，从走廊进入）南北3.2m -->
-                        <rect x="240" y="110" width="125" height="320" class="stairs-west"/>
-                        <text x="302" y="260" class="stairs-label">楼梯入口</text>
-                        <text x="302" y="280" class="stairs-label">(西侧)</text>
-                        <text x="302" y="310" class="room-size">1.25m×3.2m</text>
+                        <!-- 餐厅，楼梯移动后位于中部 -->
+                        <rect x="240" y="10" width="555" height="420" class="room" data-room="餐厅"/>
+                        <text x="517" y="200" class="room-label">餐厅</text>
+                        <text x="517" y="220" class="room-size">约5.55m×4.2m | 23.3㎡</text>
 
-                        <!-- 东侧上半层 南北3.2m -->
-                        <rect x="365" y="110" width="125" height="320" class="stairs-east"/>
-                        <text x="427" y="260" class="stairs-label">楼梯上半</text>
-                        <text x="427" y="280" class="stairs-label">(东侧)</text>
-                        <text x="427" y="310" class="room-size">1.25m×3.2m</text>
-
-                        <!-- 楼梯走向箭头 -->
-                        <path d="M 302 430 L 302 110 L 302 10" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 302 10 L 365 10 L 427 10" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 427 10 L 427 110" class="stairs-arrow" stroke-width="3"/>
-
-                        <!-- 分隔线 -->
-                        <line x1="240" y1="110" x2="490" y2="110" class="stairs-divider"/>
-                        <line x1="365" y1="10" x2="365" y2="430" class="stairs-divider"/>
-
-                        <!-- 楼梯间北窗 -->
-                        <path d="M 365 10 L 365 40" class="window" stroke-width="4"/>
-
-                        <!-- 餐厅 5.6m×4.2m -->
-                        <rect x="490" y="10" width="560" height="420" class="room" data-room="餐厅"/>
-                        <text x="770" y="200" class="room-label">餐厅</text>
-                        <text x="770" y="220" class="room-size">5.6m×4.2m | 23.5㎡</text>
-
-                        <!-- 厨房 3.55m×4.2m -->
-                        <rect x="1050" y="10" width="355" height="420" class="room" style="fill: #D1D5DB;" data-room="厨房"/>
-                        <text x="1227" y="200" class="room-label">厨房</text>
-                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
+                        <!-- 厨房，东侧紧邻楼梯 -->
+                        <rect x="795" y="10" width="355" height="420" class="room" style="fill: #D1D5DB;" data-room="厨房"/>
+                        <text x="972" y="200" class="room-label">厨房</text>
+                        <text x="972" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
 
                         <!-- 走廊（仅西侧保留） -->
                         <rect x="10" y="430" width="355" height="160" class="corridor"/>
@@ -207,20 +197,19 @@
                         <path d="M 710 10 L 710 40" class="window"/>
                         <path d="M 1225 990 L 1225 960" class="window"/>
                         <path d="M 755 10 L 755 40" class="window"/>
-                        <path d="M 1220 10 L 1220 40" class="window"/>
+                        <path d="M 972 10 L 972 40" class="window"/>
 
                         <!-- 门（全部在侧边） -->
                         <!-- 公卫门：朝南靠近东侧 -->
                         <path d="M 210 430 L 240 430" class="door"/>
                         <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
                         <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
-                        <!-- 餐厅西侧门：通往楼梯间下方，北侧靠北 -->
-                        <path d="M 490 30 L 490 60" class="door"/>
-                        <text x="495" y="45" font-size="9" fill="#DC2626">→楼梯下</text>
-                        <!-- 餐厅门：朝南靠近厨房侧（东侧） -->
-                        <path d="M 1020 430 L 1050 430" class="door"/>
-                        <!-- 厨房门：东侧 -->
-                        <path d="M 1050 215 L 1050 245" class="door"/>
+                        <!-- 餐厅门：最西侧 -->
+                        <path d="M 240 210 L 240 240" class="door"/>
+                        <text x="245" y="230" font-size="9" fill="#DC2626">餐厅门</text>
+                        <!-- 厨房门：东侧，紧邻楼梯 -->
+                        <path d="M 1150 210 L 1150 240" class="door"/>
+                        <text x="1145" y="230" font-size="9" fill="#DC2626" text-anchor="end">厨房门</text>
                         <!-- 卧室1门：朝北靠近东侧 -->
                         <path d="M 325 590 L 355 590" class="door"/>
                         <!-- 客厅门：南侧中间（已作为入户门） -->
@@ -261,47 +250,35 @@
                         <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
                         <text x="120" y="245" font-size="9" fill="#2563EB">推拉门</text>
 
-                        <!-- 楼梯间（带站台拐角，南北1m，二层出口在东侧） -->
-                        <!-- 北站台（拐角平台，南北1m=100px） -->
-                        <rect x="240" y="10" width="250" height="100" class="stairs-platform"/>
-                        <text x="365" y="55" class="stairs-label">站台拐角</text>
-                        <text x="365" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <!-- 二层楼梯间（最东北角，保持2.5m×4.2m） -->
+                        <rect x="1150" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="1275" y="55" class="stairs-label">站台拐角</text>
+                        <text x="1275" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+                        <rect x="1150" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="1212" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="1212" y="280" class="stairs-label">(东侧)</text>
+                        <text x="1212" y="310" class="room-size">1.25m×3.2m</text>
+                        <rect x="1275" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="1337" y="260" class="stairs-label">楼梯出口</text>
+                        <text x="1337" y="280" class="stairs-label">(西侧)</text>
+                        <text x="1337" y="310" class="room-size">1.25m×3.2m</text>
+                        <path d="M 1337 430 L 1337 110" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 110 L 1337 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1337 10 L 1275 10 L 1212 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 1212 10 L 1212 110" class="stairs-arrow" stroke-width="3"/>
+                        <line x1="1150" y1="110" x2="1400" y2="110" class="stairs-divider"/>
+                        <line x1="1275" y1="10" x2="1275" y2="430" class="stairs-divider"/>
+                        <path d="M 1275 10 L 1275 40" class="window" stroke-width="4"/>
 
-                        <!-- 西侧上半层（从一层上来）南北3.2m -->
-                        <rect x="240" y="110" width="125" height="320" class="stairs-west"/>
-                        <text x="302" y="260" class="stairs-label">楼梯上半</text>
-                        <text x="302" y="280" class="stairs-label">(西侧)</text>
-                        <text x="302" y="310" class="room-size">1.25m×3.2m</text>
+                        <!-- 客厅（北侧中部，延伸到走廊区域） -->
+                        <rect x="240" y="10" width="555" height="580" class="room" data-room="客厅+走廊"/>
+                        <text x="517" y="280" class="room-label">客厅（开放式连接走廊）</text>
+                        <text x="517" y="300" class="room-size">约5.55m×5.8m | 32.2㎡</text>
 
-                        <!-- 东侧出口（下半层，出到走廊）南北3.2m -->
-                        <rect x="365" y="110" width="125" height="320" class="stairs-east"/>
-                        <text x="427" y="260" class="stairs-label">楼梯出口</text>
-                        <text x="427" y="280" class="stairs-label">(东侧)</text>
-                        <text x="427" y="310" class="room-size">1.25m×3.2m</text>
-
-                        <!-- 楼梯走向箭头（二层相反） -->
-                        <path d="M 302 430 L 302 110" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 302 110 L 302 10" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 302 10 L 365 10" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 365 10 L 427 10" class="stairs-arrow" stroke-width="3"/>
-                        <path d="M 427 10 L 427 110" class="stairs-arrow" stroke-width="3"/>
-
-                        <!-- 分隔线 -->
-                        <line x1="240" y1="110" x2="490" y2="110" class="stairs-divider"/>
-                        <line x1="365" y1="10" x2="365" y2="430" class="stairs-divider"/>
-
-                        <!-- 楼梯间北窗 -->
-                        <path d="M 365 10 L 365 40" class="window" stroke-width="4"/>
-
-                        <!-- 客厅（北侧中部，延伸到走廊区域，后面用走廊盖住） -->
-                        <rect x="490" y="10" width="560" height="580" class="room" data-room="客厅+走廊"/>
-                        <text x="770" y="280" class="room-label">客厅（开放式连接走廊）</text>
-                        <text x="770" y="300" class="room-size">5.6m×5.8m | 32.5㎡</text>
-
-                        <!-- 次卧3 3.55m×4.2m -->
-                        <rect x="1050" y="10" width="355" height="420" class="room" data-room="次卧3"/>
-                        <text x="1227" y="200" class="room-label">次卧3</text>
-                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
+                        <!-- 次卧3，位于楼梯西侧 -->
+                        <rect x="795" y="10" width="355" height="420" class="room" data-room="次卧3"/>
+                        <text x="972" y="200" class="room-label">次卧3</text>
+                        <text x="972" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
 
                         <!-- 走廊区域（东西贯通，盖住客厅超出的部分） -->
                         <rect x="10" y="430" width="1390" height="160" class="corridor"/>
@@ -336,15 +313,15 @@
                         <path d="M 445 990 L 445 960" class="window" stroke-width="4"/>
                         <path d="M 795 990 L 795 960" class="window"/>
                         <path d="M 1232 990 L 1232 960" class="window"/>
-                        <path d="M 770 10 L 770 40" class="window"/>
-                        <path d="M 1227 10 L 1227 40" class="window"/>
+                        <path d="M 517 10 L 517 40" class="window"/>
+                        <path d="M 972 10 L 972 40" class="window"/>
 
                         <!-- 门（侧边位置） -->
                         <!-- 主卫门：朝南靠近东侧 -->
                         <path d="M 210 430 L 240 430" class="door"/>
                         <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
                         <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
-                        <!-- 次卧3门（东北角）：朝南靠近西侧 -->
+                        <!-- 次卧3门（东北区域）：朝南靠近西侧 -->
                         <path d="M 1065 430 L 1095 430" class="door"/>
                         <!-- 次卧4门（西南角）：朝北靠近东侧 -->
                         <path d="M 285 590 L 315 590" class="door"/>
@@ -363,8 +340,8 @@
                 <div class="room-info">
                     <div class="room-info-title">布局详情</div>
                     <div class="room-info-content" id="room-info">
-                        <strong>一层：</strong>2卧(卧室1+卧室2) + 公卫(干湿分离+推拉门) + 客厅(39.2㎡含走廊) + 餐厨 + 楼梯入口西侧<br>
-                        <strong>二层：</strong>4卧(主卧套房+次卧1+次卧3+次卧4) + 主卫(干湿分离+推拉门) + 开放式客厅 + 楼梯出口东侧<br>
+                        <strong>一层：</strong>2卧(卧室1+卧室2) + 公卫(干湿分离+推拉门) + 客厅 + 餐厅 + 厨房 + 东北角楼梯<br>
+                        <strong>二层：</strong>4卧(主卧套房+次卧1+次卧3+次卧4) + 主卫(干湿分离+推拉门) + 开放式客厅 + 东北角楼梯<br>
                         点击房间查看详情
                     </div>
                 </div>
@@ -396,9 +373,9 @@
             <!-- 模块二：楼梯设计 -->
             <div class="module-title">🚪 模块二：楼梯设计</div>
             <div class="features-grid">
-                <div class="feature-item"><div class="feature-label">楼梯走向</div><div class="feature-desc">一层：入口西侧→北站台→东侧上半<br>二层：西侧上半→北站台→东侧出口</div></div>
-                <div class="feature-item"><div class="feature-label">站台拐角</div><div class="feature-desc">北侧站台 2.5m×1m | 2.5㎡（南北仅1m，楼梯宽敞）</div></div>
-                <div class="feature-item"><div class="feature-label">楼梯分半</div><div class="feature-desc">西侧/东侧各 1.25m×3.2m = 4㎡（楼梯舒适）</div></div>
+                <div class="feature-item"><div class="feature-label">楼梯走向</div><div class="feature-desc">一层：右侧（东侧）起步→北站台→左侧（西侧）上半<br>二层：东侧上半→北站台→西侧出口</div></div>
+                <div class="feature-item"><div class="feature-label">站台拐角</div><div class="feature-desc">北侧站台 2.5m×1m | 2.5㎡（保持原尺寸）</div></div>
+                <div class="feature-item"><div class="feature-label">楼梯分半</div><div class="feature-desc">东侧/西侧各 1.25m×3.2m = 4㎡（楼梯舒适）</div></div>
                 <div class="feature-item"><div class="feature-label">楼梯采光</div><div class="feature-desc">北边有窗，采光通风好</div></div>
                 <div class="feature-item"><div class="feature-label">楼梯总尺寸</div><div class="feature-desc">2.5m×4.2m | 10.5㎡</div></div>
             </div>
@@ -406,7 +383,7 @@
             <!-- 模块三：一层布局 -->
             <div class="module-title">🏠 模块三：一层布局详解</div>
             <div class="features-grid">
-                <div class="feature-item"><div class="feature-label">北半部分（4.2m）</div><div class="feature-desc">公卫2.3m×4.2m(干湿分离) + 楼梯2.5m×4.2m + 餐厅5.6m×4.2m + 厨房3.55m×4.2m</div></div>
+                <div class="feature-item"><div class="feature-label">北半部分（4.2m）</div><div class="feature-desc">公卫2.3m×4.2m(干湿分离) + 餐厅约5.55m×4.2m + 厨房3.55m×4.2m + 东北角楼梯2.5m×4.2m</div></div>
                 <div class="feature-item"><div class="feature-label">走廊</div><div class="feature-desc">西侧走廊 3.55m×1.6m = 5.7㎡（仅卧室1前保留）</div></div>
                 <div class="feature-item"><div class="feature-label">南半部分（4m+1.6m走廊）</div><div class="feature-desc">卧室1 3.55m×4m + 客厅7m×5.6m + 卧室2 3.55m×4m</div></div>
                 <div class="feature-item"><div class="feature-label">入户门</div><div class="feature-desc">南门中间位置，直通客厅</div></div>
@@ -415,7 +392,7 @@
             <!-- 模块四：二层布局 -->
             <div class="module-title">🏡 模块四：二层布局详解</div>
             <div class="features-grid">
-                <div class="feature-item"><div class="feature-label">北半部分（4.2m+1.6m）</div><div class="feature-desc">主卫2.3m×4.2m(干湿分离+推拉门) + 楼梯2.5m×4.2m + 客厅5.6m×5.8m(开放式) + 次卧3 3.55m×4.2m(东北角)</div></div>
+                <div class="feature-item"><div class="feature-label">北半部分（4.2m+1.6m）</div><div class="feature-desc">主卫2.3m×4.2m(干湿分离+推拉门) + 东北角楼梯2.5m×4.2m + 客厅约5.55m×5.8m(开放式) + 次卧3 3.55m×4.2m</div></div>
                 <div class="feature-item"><div class="feature-label">走廊区域</div><div class="feature-desc">东西14m × 南北1.6m，与客厅开放式连通</div></div>
                 <div class="feature-item"><div class="feature-label">南半部分（4m）</div><div class="feature-desc">次卧4 3.5m×4m(西南角) + 阳台1.6m×4m + 主卧套房5.4m×4m + 次卧1 3.3m×4m(东南角)</div></div>
                 <div class="feature-item"><div class="feature-label">开放式客厅</div><div class="feature-desc">与走廊无墙无门，空间通透</div></div>
@@ -425,8 +402,8 @@
             <div class="module-title">🪟 模块五：门窗设计</div>
             <div class="features-grid">
                 <div class="feature-item"><div class="feature-label">门位置原则</div><div class="feature-desc">所有门都在侧边（东西侧），避免对视</div></div>
-                <div class="feature-item"><div class="feature-label">一层门</div><div class="feature-desc">公卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 餐厅西侧门北侧靠北(通往楼梯下) + 餐厅南侧门靠东(厨房侧) + 厨房门东侧 + 卧室1门北侧靠东 + 卧室2门北侧靠西 + 入户门(南门中间)</div></div>
-                <div class="feature-item"><div class="feature-label">二层门</div><div class="feature-desc">主卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 次卧3门南侧靠西(东北角) + 次卧4门北侧靠东(西南角) + 主卧门北侧靠西 + 次卧1门北侧靠西(东南角)</div></div>
+                <div class="feature-item"><div class="feature-label">一层门</div><div class="feature-desc">公卫门 + 洗澡间推拉玻璃门 + 餐厅最西侧门 + 厨房东侧门(楼梯旁) + 卧室1门 + 卧室2门 + 入户门(南门中间)</div></div>
+                <div class="feature-item"><div class="feature-label">二层门</div><div class="feature-desc">主卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 次卧3门南侧靠西 + 次卧4门北侧靠东 + 主卧门北侧靠西 + 次卧1门北侧靠西</div></div>
                 <div class="feature-item"><div class="feature-label">窗户设计</div><div class="feature-desc">南向采光窗 + 北向通风窗 + 楼梯北窗</div></div>
             </div>
 
