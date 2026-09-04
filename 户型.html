@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自建房户型平面图 - 方案B最终版 - 14m×10m</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; background: #F8F9FA; color: #1F2937; }
+        .header { background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%); color: white; padding: 20px 0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        .specs { display: flex; justify-content: center; gap: 30px; margin-top: 15px; font-size: 14px; flex-wrap: wrap; }
+        .spec-item { display: flex; align-items: center; gap: 8px; }
+        .spec-icon { width: 20px; height: 20px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .floor-toggle { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
+        .floor-btn { background: white; border: 2px solid #2563EB; color: #2563EB; padding: 12px 40px; font-size: 16px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; }
+        .floor-btn.active { background: #2563EB; color: white; }
+        .floor-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .plan-display { display: flex; justify-content: center; margin-bottom: 40px; }
+        .plan-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 900px; }
+        .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .plan-title { font-size: 22px; color: #2563EB; font-weight: 700; }
+        .plan-badge { background: #DBEAFE; color: #1E40AF; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+        .floorplan-container { width: 100%; aspect-ratio: 14/10; background: #FAFAFA; border: 3px solid #2563EB; border-radius: 8px; position: relative; overflow: hidden; }
+        .floorplan-svg { width: 100%; height: 100%; }
+        .room { fill: #E5E7EB; stroke: #1F2937; stroke-width: 2; cursor: pointer; transition: fill 0.2s ease; }
+        .room:hover { fill: #DBEAFE; }
+        .room.highlighted { fill: #BFDBFE; stroke: #2563EB; stroke-width: 3; }
+        .bathroom-dry { fill: #E0E7FF; stroke: #1F2937; stroke-width: 2; }
+        .bathroom-wet { fill: #BFDBFE; stroke: #1F2937; stroke-width: 2; }
+        .corridor { fill: #FEF3C7;  }
+        .entry-path { fill: #FEE2E2; stroke: #DC2626; stroke-width: 2; }
+        .room-label { font-size: 13px; font-weight: 600; fill: #1F2937; pointer-events: none; }
+        .room-size { font-size: 10px; fill: #6B7280; pointer-events: none; }
+        .room-sub-label { font-size: 11px; fill: #4B5563; pointer-events: none; }
+        .wall { stroke: #1F2937; stroke-width: 4; fill: none; }
+        .wall-inner { stroke: #1F2937; stroke-width: 2; fill: none; }
+        .door { stroke: #DC2626; stroke-width: 3; fill: none; }
+        .door-arc { stroke: #DC2626; stroke-width: 2; fill: none; stroke-dasharray: 5,3; }
+        .window { stroke: #2563EB; stroke-width: 3; fill: none; }
+        .stairs { fill: #9CA3AF; stroke: #1F2937; stroke-width: 1; cursor: pointer; }
+        .stairs-west { fill: #D1D5DB; stroke: #1F2937; stroke-width: 1; }
+        .stairs-east { fill: #9CA3AF; stroke: #1F2937; stroke-width: 1; }
+        .stairs-platform { fill: #F3F4F6; stroke: #1F2937; stroke-width: 1; }
+        .stairs-divider { stroke: #1F2937; stroke-width: 2; stroke-dasharray: 8,4; }
+        .stairs-arrow { stroke: #DC2626; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+        .stairs-label { font-size: 10px; fill: #374151; font-weight: 600; }
+        .orientation-north { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: #1E40AF; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.4); }
+        .orientation-south { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #DC2626; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; box-shadow: 0 2px 8px rgba(220,38,38,0.4); }
+        .entry-marker { position: absolute; bottom: 60px; left: 120px; background: #DC2626; color: white; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(220,38,38,0.4); }
+        .room-info { margin-top: 20px; padding: 20px; background: #F3F4F6; border-radius: 8px; }
+        .room-info-title { font-size: 18px; color: #2563EB; font-weight: 700; margin-bottom: 10px; }
+        .room-info-content { font-size: 14px; color: #4B5563; line-height: 1.7; }
+        .dimensions { position: absolute; top: 60px; right: 10px; display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #6B7280; font-weight: 600; }
+        .legend { display: flex; justify-content: center; gap: 25px; margin-top: 20px; font-size: 13px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-icon { width: 24px; height: 12px; border-radius: 3px; }
+        .legend-wall { background: #1F2937; }
+        .legend-door { background: #DC2626; }
+        .legend-window { background: #2563EB; }
+        .legend-corridor { background: #FEF3C7; }
+        .legend-dry { background: #E0E7FF; }
+        .legend-wet { background: #BFDBFE; }
+        .legend-entry { background: #FEE2E2; }
+        .legend-stairs { background: #9CA3AF; }
+        .legend-platform { background: #F3F4F6; }
+        .legend-glass { background: #60A5FA; }
+        .features-section { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 35px; }
+        .features-title { font-size: 20px; color: #2563EB; margin-bottom: 18px; text-align: center; }
+        .module-title { font-size: 16px; color: #1E40AF; font-weight: 700; margin: 15px 0 10px 0; padding-left: 10px; border-left: 4px solid #2563EB; }
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .feature-item { background: #F9FAFB; padding: 12px; border-radius: 8px; border-left: 3px solid #2563EB; }
+        .feature-label { font-size: 13px; color: #1F2937; font-weight: 600; margin-bottom: 4px; }
+        .feature-desc { font-size: 12px; color: #6B7280; }
+        @media (max-width: 900px) { .plan-card { max-width: 100%; } .specs { flex-wrap: wrap; gap: 15px; } .features-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>自建房户型平面图 - 方案B最终版</h1>
+        <p>占地14m×10m · 6卧2卫 · 楼梯带站台拐角 · 门全侧边 · 二层客厅开放式</p>
+        <div class="specs">
+            <div class="spec-item"><div class="spec-icon">📐</div><span>占地140㎡ 建筑280㎡</span></div>
+            <div class="spec-item"><div class="spec-icon">🛏️</div><span>一层2卧+二层4卧=6间</span></div>
+            <div class="spec-item"><div class="spec-icon">🚿</div><span>一层公卫+二层主卫=2间</span></div>
+            <div class="spec-item"><div class="spec-icon">🚪</div><span>所有门在侧边</span></div>
+        </div>
+
+    <div class="container">
+        <div class="floor-toggle">
+            <button class="floor-btn active" onclick="showFloor(1)">一层平面图</button>
+            <button class="floor-btn" onclick="showFloor(2)">二层平面图</button>
+        </div>
+
+        <div class="plan-display">
+            <div class="plan-card">
+                <div class="plan-header">
+                    <div class="plan-title">一层：2卧+公卫+客餐厨+楼梯入口西侧</div>
+                    <div class="plan-badge">详细尺寸版</div>
+                </div>
+
+                <div class="floorplan-container">
+                    <div class="orientation-north">北</div>
+                    <div class="orientation-south">南</div>
+
+                    <svg id="floor1" class="floorplan-svg" viewBox="0 0 1400 1000" style="display: block;">
+                        <!-- 定义箭头标记 -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#DC2626"/>
+                            </marker>
+                        </defs>
+
+                        <rect x="10" y="10" width="1380" height="980" class="wall"/>
+
+                        <!-- 北半部分（深度4.2m） -->
+                        <!-- 公卫（西北角）干湿分离 2.3m×4.2m -->
+                        <rect x="10" y="10" width="230" height="420" class="wall-inner" data-room="公卫"/>
+                        <text x="120" y="180" class="room-label">公卫</text>
+                        <text x="120" y="200" class="room-size">2.3m×4.2m | 9.7㎡</text>
+                        <rect x="10" y="10" width="230" height="210" class="bathroom-wet"/>
+                        <text x="120" y="110" class="room-sub-label">洗澡间</text>
+                        <rect x="10" y="220" width="230" height="210" class="bathroom-dry"/>
+                        <text x="120" y="290" class="room-sub-label">厕所+洗漱台</text>
+                        <line x1="10" y1="220" x2="240" y2="220" class="wall-inner"/>
+                        <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
+                        <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
+                        <text x="120" y="245" font-size="9" fill="#2563EB">推拉门</text>
+
+                        <!-- 楼梯间（带站台拐角，南北1m）2.5m×4.2m -->
+                        <!-- 北站台（拐角平台，南北1m=100px） -->
+                        <rect x="240" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="365" y="55" class="stairs-label">站台拐角</text>
+                        <text x="365" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+
+                        <!-- 西侧入口（下半层，从走廊进入）南北3.2m -->
+                        <rect x="240" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="302" y="260" class="stairs-label">楼梯入口</text>
+                        <text x="302" y="280" class="stairs-label">(西侧)</text>
+                        <text x="302" y="310" class="room-size">1.25m×3.2m</text>
+
+                        <!-- 东侧上半层 南北3.2m -->
+                        <rect x="365" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="427" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="427" y="280" class="stairs-label">(东侧)</text>
+                        <text x="427" y="310" class="room-size">1.25m×3.2m</text>
+
+                        <!-- 楼梯走向箭头 -->
+                        <path d="M 302 430 L 302 110 L 302 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 302 10 L 365 10 L 427 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 427 10 L 427 110" class="stairs-arrow" stroke-width="3"/>
+
+                        <!-- 分隔线 -->
+                        <line x1="240" y1="110" x2="490" y2="110" class="stairs-divider"/>
+                        <line x1="365" y1="10" x2="365" y2="430" class="stairs-divider"/>
+
+                        <!-- 楼梯间北窗 -->
+                        <path d="M 365 10 L 365 40" class="window" stroke-width="4"/>
+
+                        <!-- 餐厅 5.6m×4.2m -->
+                        <rect x="490" y="10" width="560" height="420" class="room" data-room="餐厅"/>
+                        <text x="770" y="200" class="room-label">餐厅</text>
+                        <text x="770" y="220" class="room-size">5.6m×4.2m | 23.5㎡</text>
+
+                        <!-- 厨房 3.55m×4.2m -->
+                        <rect x="1050" y="10" width="355" height="420" class="room" style="fill: #D1D5DB;" data-room="厨房"/>
+                        <text x="1227" y="200" class="room-label">厨房</text>
+                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
+
+                        <!-- 走廊（仅西侧保留） -->
+                        <rect x="10" y="430" width="355" height="160" class="corridor"/>
+                        <text x="182" y="510" class="room-label">走廊 3.55m×1.6m | 5.7㎡</text>
+                        <!-- 走廊东侧墙线（与楼梯分隔线对齐） -->
+                        <line x1="365" y1="430" x2="365" y2="590" class="wall-inner"/>
+
+                        <!-- 南半部分 -->
+                        <!-- 卧室1 3.55m×4m -->
+                        <rect x="10" y="590" width="355" height="400" class="room" data-room="卧室1"/>
+                        <text x="182" y="780" class="room-label">卧室1</text>
+                        <text x="182" y="800" class="room-size">3.55m×4m | 14.2㎡</text>
+
+                        <!-- 客厅 6.85m×5.6m（合并入户通道+走廊部分） -->
+                        <rect x="365" y="430" width="685" height="560" class="room" data-room="客厅" style="fill: #DBEAFE;"/>
+                        <text x="707" y="700" class="room-label">客厅</text>
+                        <text x="707" y="720" class="room-size">6.85m×5.6m | 38.4㎡</text>
+                        <text x="707" y="745" class="room-sub-label">(含原入户通道+走廊部分)</text>
+
+                        <!-- 走廊（东侧，卧室2前） -->
+                        <rect x="1050" y="430" width="355" height="160" class="corridor"/>
+                        <text x="1227" y="510" class="room-label">走廊 3.55m×1.6m | 5.7㎡</text>
+
+                        <!-- 卧室2 3.55m×4m -->
+                        <rect x="1050" y="590" width="355" height="400" class="room" data-room="卧室2"/>
+                        <text x="1227" y="780" class="room-label">卧室2</text>
+                        <text x="1227" y="800" class="room-size">3.55m×4m | 14.2㎡</text>
+
+                        <!-- 入户门（客厅南侧，东侧偏移） -->
+                        <rect x="790" y="980" width="40" height="10" fill="#DC2626"/>
+                        <text x="810" y="970" font-size="12" fill="#DC2626" font-weight="bold" text-anchor="middle">↑ 入户门</text>
+
+                        <!-- 窗户 -->
+                        <path d="M 180 990 L 180 960" class="window"/>
+                        <!-- 客厅南窗（西侧，入户门左侧） -->
+                        <path d="M 550 990 L 550 960" class="window" stroke-width="4"/>
+                        <path d="M 710 10 L 710 40" class="window"/>
+                        <path d="M 1225 990 L 1225 960" class="window"/>
+                        <path d="M 755 10 L 755 40" class="window"/>
+                        <path d="M 1220 10 L 1220 40" class="window"/>
+
+                        <!-- 门（全部在侧边） -->
+                        <!-- 公卫门：朝南靠近东侧 -->
+                        <path d="M 210 430 L 240 430" class="door"/>
+                        <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
+                        <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
+                        <!-- 餐厅西侧门：通往楼梯间下方，北侧靠北 -->
+                        <path d="M 490 30 L 490 60" class="door"/>
+                        <text x="495" y="45" font-size="9" fill="#DC2626">→楼梯下</text>
+                        <!-- 餐厅门：朝南靠近厨房侧（东侧） -->
+                        <path d="M 1020 430 L 1050 430" class="door"/>
+                        <!-- 厨房门：东侧 -->
+                        <path d="M 1050 215 L 1050 245" class="door"/>
+                        <!-- 卧室1门：朝北靠近东侧 -->
+                        <path d="M 325 590 L 355 590" class="door"/>
+                        <!-- 客厅门：南侧中间（已作为入户门） -->
+                        <!-- 卧室2门：朝北靠近西侧 -->
+                        <path d="M 1065 590 L 1095 590" class="door"/>
+
+                        <!-- 尺寸标注 -->
+                        <line x1="5" y1="10" x2="5" y2="430" stroke="#1E40AF" stroke-width="2"/>
+                        <text x="8" y="215" font-size="11" fill="#1E40AF">4.2m</text>
+                        <line x1="5" y1="430" x2="5" y2="590" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="8" y="510" font-size="11" fill="#F59E0B">1.6m</text>
+                        <line x1="5" y1="590" x2="5" y2="990" stroke="#DC2626" stroke-width="2"/>
+                        <text x="8" y="790" font-size="11" fill="#DC2626">4m</text>
+                    </svg>
+
+                    <!-- Floor 2 -->
+                    <svg id="floor2" class="floorplan-svg" viewBox="0 0 1400 1000" style="display: none;">
+                        <!-- 定义箭头标记 -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#DC2626"/>
+                            </marker>
+                        </defs>
+
+                        <rect x="10" y="10" width="1380" height="980" class="wall"/>
+
+                        <!-- 北半部分 -->
+                        <!-- 主卫 2.3m×4.2m -->
+                        <rect x="10" y="10" width="230" height="420" class="wall-inner"/>
+                        <text x="120" y="180" class="room-label">主卫</text>
+                        <text x="120" y="200" class="room-size">2.3m×4.2m | 9.7㎡</text>
+                        <rect x="10" y="10" width="230" height="210" class="bathroom-wet"/>
+                        <text x="120" y="110" class="room-sub-label">洗澡间</text>
+                        <rect x="10" y="220" width="230" height="210" class="bathroom-dry"/>
+                        <text x="120" y="290" class="room-sub-label">厕所+洗漱台</text>
+                        <line x1="10" y1="220" x2="240" y2="220" class="wall-inner"/>
+                        <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
+                        <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
+                        <text x="120" y="245" font-size="9" fill="#2563EB">推拉门</text>
+
+                        <!-- 楼梯间（带站台拐角，南北1m，二层出口在东侧） -->
+                        <!-- 北站台（拐角平台，南北1m=100px） -->
+                        <rect x="240" y="10" width="250" height="100" class="stairs-platform"/>
+                        <text x="365" y="55" class="stairs-label">站台拐角</text>
+                        <text x="365" y="75" class="room-size">2.5m×1m | 2.5㎡</text>
+
+                        <!-- 西侧上半层（从一层上来）南北3.2m -->
+                        <rect x="240" y="110" width="125" height="320" class="stairs-west"/>
+                        <text x="302" y="260" class="stairs-label">楼梯上半</text>
+                        <text x="302" y="280" class="stairs-label">(西侧)</text>
+                        <text x="302" y="310" class="room-size">1.25m×3.2m</text>
+
+                        <!-- 东侧出口（下半层，出到走廊）南北3.2m -->
+                        <rect x="365" y="110" width="125" height="320" class="stairs-east"/>
+                        <text x="427" y="260" class="stairs-label">楼梯出口</text>
+                        <text x="427" y="280" class="stairs-label">(东侧)</text>
+                        <text x="427" y="310" class="room-size">1.25m×3.2m</text>
+
+                        <!-- 楼梯走向箭头（二层相反） -->
+                        <path d="M 302 430 L 302 110" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 302 110 L 302 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 302 10 L 365 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 365 10 L 427 10" class="stairs-arrow" stroke-width="3"/>
+                        <path d="M 427 10 L 427 110" class="stairs-arrow" stroke-width="3"/>
+
+                        <!-- 分隔线 -->
+                        <line x1="240" y1="110" x2="490" y2="110" class="stairs-divider"/>
+                        <line x1="365" y1="10" x2="365" y2="430" class="stairs-divider"/>
+
+                        <!-- 楼梯间北窗 -->
+                        <path d="M 365 10 L 365 40" class="window" stroke-width="4"/>
+
+                        <!-- 客厅（北侧中部，延伸到走廊区域，后面用走廊盖住） -->
+                        <rect x="490" y="10" width="560" height="580" class="room" data-room="客厅+走廊"/>
+                        <text x="770" y="280" class="room-label">客厅（开放式连接走廊）</text>
+                        <text x="770" y="300" class="room-size">5.6m×5.8m | 32.5㎡</text>
+
+                        <!-- 次卧3 3.55m×4.2m -->
+                        <rect x="1050" y="10" width="355" height="420" class="room" data-room="次卧3"/>
+                        <text x="1227" y="200" class="room-label">次卧3</text>
+                        <text x="1227" y="220" class="room-size">3.55m×4.2m | 14.9㎡</text>
+
+                        <!-- 走廊区域（东西贯通，盖住客厅超出的部分） -->
+                        <rect x="10" y="430" width="1390" height="160" class="corridor"/>
+                        <text x="700" y="510" class="room-label">走廊 14m×1.6m | 22.4㎡</text>
+
+                        <!-- 次卧4 3.55m×4m -->
+                        <rect x="10" y="590" width="355" height="400" class="room" data-room="次卧4"/>
+                        <text x="182" y="780" class="room-label">次卧4</text>
+                        <text x="182" y="800" class="room-size">3.55m×4m | 14.2㎡</text>
+
+                        <!-- 阳台 1.6m×4m（无北侧边框） -->
+                        <rect x="365" y="590" width="160" height="400" style="fill: #D1FAE5; stroke: #1F2937; stroke-width: 2;" data-room="阳台"/>
+                        <line x1="365" y1="590" x2="365" y2="990" class="wall-inner"/>
+                        <line x1="525" y1="590" x2="525" y2="990" class="wall-inner"/>
+                        <line x1="365" y1="990" x2="525" y2="990" class="wall-inner"/>
+                        <text x="445" y="780" class="room-label" style="fill:#059669;">阳台</text>
+                        <text x="445" y="800" class="room-size" style="fill:#047857;">1.6m×4m | 6.4㎡</text>
+
+                        <!-- 主卧套房 5.4m×4m -->
+                        <rect x="525" y="590" width="540" height="400" class="room" data-room="主卧套房"/>
+                        <text x="795" y="780" class="room-label">主卧套房</text>
+                        <text x="795" y="800" class="room-size">5.4m×4m | 21.6㎡</text>
+
+                        <!-- 次卧1 3.55m×4m -->
+                        <rect x="1050" y="590" width="355" height="400" class="room" data-room="次卧1"/>
+                        <text x="1227" y="780" class="room-label">次卧1</text>
+                        <text x="1227" y="800" class="room-size">3.55m×4m | 14.2㎡</text>
+
+                        <!-- 窗户 -->
+                        <path d="M 182 990 L 182 960" class="window"/>
+                        <!-- 阳台窗户（南侧） -->
+                        <path d="M 445 990 L 445 960" class="window" stroke-width="4"/>
+                        <path d="M 795 990 L 795 960" class="window"/>
+                        <path d="M 1232 990 L 1232 960" class="window"/>
+                        <path d="M 770 10 L 770 40" class="window"/>
+                        <path d="M 1227 10 L 1227 40" class="window"/>
+
+                        <!-- 门（侧边位置） -->
+                        <!-- 主卫门：朝南靠近东侧 -->
+                        <path d="M 210 430 L 240 430" class="door"/>
+                        <!-- 洗澡间到厕所的推拉玻璃门：朝北 -->
+                        <rect x="100" y="218" width="30" height="4" fill="#60A5FA" stroke="#2563EB" stroke-width="1"/>
+                        <!-- 次卧3门（东北角）：朝南靠近西侧 -->
+                        <path d="M 1065 430 L 1095 430" class="door"/>
+                        <!-- 次卧4门（西南角）：朝北靠近东侧 -->
+                        <path d="M 285 590 L 315 590" class="door"/>
+                        <!-- 主卧门：朝北靠近西侧 -->
+                        <path d="M 565 590 L 595 590" class="door"/>
+                        <!-- 次卧1门（东南角）：朝北靠近西侧 -->
+                        <path d="M 1060 590 L 1090 590" class="door"/>
+                    </svg>
+
+                    <div class="dimensions">
+                        <div>← 西 14m 东 →</div>
+                        <div>↑ 北 10m 南 ↓</div>
+                    </div>
+                </div>
+
+                <div class="room-info">
+                    <div class="room-info-title">布局详情</div>
+                    <div class="room-info-content" id="room-info">
+                        <strong>一层：</strong>2卧(卧室1+卧室2) + 公卫(干湿分离+推拉门) + 客厅(39.2㎡含走廊) + 餐厨 + 楼梯入口西侧<br>
+                        <strong>二层：</strong>4卧(主卧套房+次卧1+次卧3+次卧4) + 主卫(干湿分离+推拉门) + 开放式客厅 + 楼梯出口东侧<br>
+                        点击房间查看详情
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-icon legend-wall"></div><span>墙体</span></div>
+            <div class="legend-item"><div class="legend-icon legend-door"></div><span>门(侧边)</span></div>
+            <div class="legend-item"><div class="legend-icon legend-glass"></div><span>推拉玻璃门</span></div>
+            <div class="legend-item"><div class="legend-icon legend-window"></div><span>窗户</span></div>
+            <div class="legend-item"><div class="legend-icon legend-corridor"></div><span>走廊</span></div>
+            <div class="legend-item"><div class="legend-icon legend-platform"></div><span>站台拐角</span></div>
+            <div class="legend-item"><div class="legend-icon legend-stairs"></div><span>楼梯</span></div>
+        </div>
+
+        <div class="features-section">
+            <h2 class="features-title">整体设计详解</h2>
+
+            <!-- 模块一：基本参数 -->
+            <div class="module-title">📐 模块一：基本参数</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">占地面积</div><div class="feature-desc">东西14m × 南北10m = 140㎡</div></div>
+                <div class="feature-item"><div class="feature-label">建筑面积</div><div class="feature-desc">两层共280㎡（一层140㎡+二层140㎡）</div></div>
+                <div class="feature-item"><div class="feature-label">卧室数量</div><div class="feature-desc">一层2间 + 二层4间 = 共6间卧室</div></div>
+                <div class="feature-item"><div class="feature-label">卫生间</div><div class="feature-desc">一层公卫 + 二层主卫 = 共2间（干湿分离）</div></div>
+            </div>
+
+            <!-- 模块二：楼梯设计 -->
+            <div class="module-title">🚪 模块二：楼梯设计</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">楼梯走向</div><div class="feature-desc">一层：入口西侧→北站台→东侧上半<br>二层：西侧上半→北站台→东侧出口</div></div>
+                <div class="feature-item"><div class="feature-label">站台拐角</div><div class="feature-desc">北侧站台 2.5m×1m | 2.5㎡（南北仅1m，楼梯宽敞）</div></div>
+                <div class="feature-item"><div class="feature-label">楼梯分半</div><div class="feature-desc">西侧/东侧各 1.25m×3.2m = 4㎡（楼梯舒适）</div></div>
+                <div class="feature-item"><div class="feature-label">楼梯采光</div><div class="feature-desc">北边有窗，采光通风好</div></div>
+                <div class="feature-item"><div class="feature-label">楼梯总尺寸</div><div class="feature-desc">2.5m×4.2m | 10.5㎡</div></div>
+            </div>
+
+            <!-- 模块三：一层布局 -->
+            <div class="module-title">🏠 模块三：一层布局详解</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">北半部分（4.2m）</div><div class="feature-desc">公卫2.3m×4.2m(干湿分离) + 楼梯2.5m×4.2m + 餐厅5.6m×4.2m + 厨房3.55m×4.2m</div></div>
+                <div class="feature-item"><div class="feature-label">走廊</div><div class="feature-desc">西侧走廊 3.55m×1.6m = 5.7㎡（仅卧室1前保留）</div></div>
+                <div class="feature-item"><div class="feature-label">南半部分（4m+1.6m走廊）</div><div class="feature-desc">卧室1 3.55m×4m + 客厅7m×5.6m + 卧室2 3.55m×4m</div></div>
+                <div class="feature-item"><div class="feature-label">入户门</div><div class="feature-desc">南门中间位置，直通客厅</div></div>
+            </div>
+
+            <!-- 模块四：二层布局 -->
+            <div class="module-title">🏡 模块四：二层布局详解</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">北半部分（4.2m+1.6m）</div><div class="feature-desc">主卫2.3m×4.2m(干湿分离+推拉门) + 楼梯2.5m×4.2m + 客厅5.6m×5.8m(开放式) + 次卧3 3.55m×4.2m(东北角)</div></div>
+                <div class="feature-item"><div class="feature-label">走廊区域</div><div class="feature-desc">东西14m × 南北1.6m，与客厅开放式连通</div></div>
+                <div class="feature-item"><div class="feature-label">南半部分（4m）</div><div class="feature-desc">次卧4 3.5m×4m(西南角) + 阳台1.6m×4m + 主卧套房5.4m×4m + 次卧1 3.3m×4m(东南角)</div></div>
+                <div class="feature-item"><div class="feature-label">开放式客厅</div><div class="feature-desc">与走廊无墙无门，空间通透</div></div>
+            </div>
+
+            <!-- 模块五：门窗设计 -->
+            <div class="module-title">🪟 模块五：门窗设计</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">门位置原则</div><div class="feature-desc">所有门都在侧边（东西侧），避免对视</div></div>
+                <div class="feature-item"><div class="feature-label">一层门</div><div class="feature-desc">公卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 餐厅西侧门北侧靠北(通往楼梯下) + 餐厅南侧门靠东(厨房侧) + 厨房门东侧 + 卧室1门北侧靠东 + 卧室2门北侧靠西 + 入户门(南门中间)</div></div>
+                <div class="feature-item"><div class="feature-label">二层门</div><div class="feature-desc">主卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 次卧3门南侧靠西(东北角) + 次卧4门北侧靠东(西南角) + 主卧门北侧靠西 + 次卧1门北侧靠西(东南角)</div></div>
+                <div class="feature-item"><div class="feature-label">窗户设计</div><div class="feature-desc">南向采光窗 + 北向通风窗 + 楼梯北窗</div></div>
+            </div>
+
+            <!-- 模块六：功能分区 -->
+            <div class="module-title">🎯 模块六：功能分区</div>
+            <div class="features-grid">
+                <div class="feature-item"><div class="feature-label">一层动区</div><div class="feature-desc">客厅(39.2㎡)+餐厅+厨房+公卫，适合老人和日常活动</div></div>
+                <div class="feature-item"><div class="feature-label">一层静区</div><div class="feature-desc">卧室1+卧室2，无需上楼</div></div>
+                <div class="feature-item"><div class="feature-label">二层动区</div><div class="feature-desc">开放式客厅+阳台，家庭聚会空间</div></div>
+                <div class="feature-item"><div class="feature-label">二层静区</div><div class="feature-desc">主卧套房+次卧1+次卧4+主卫，私密休息空间</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showFloor(floor) {
+            const buttons = document.querySelectorAll('.floor-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            buttons[floor - 1].classList.add('active');
+            document.getElementById('floor1').style.display = floor === 1 ? 'block' : 'none';
+            document.getElementById('floor2').style.display = floor === 2 ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.room, .stairs, .corridor, .bathroom-dry, .bathroom-wet, .entry-path').forEach(room => {
+            room.addEventListener('click', function(e) {
+                const roomName = this.getAttribute('data-room') || '房间';
+                const infoDiv = document.getElementById('room-info');
+                infoDiv.innerHTML = `<strong>${roomName}</strong>`;
+                document.querySelectorAll('.room, .stairs, .corridor, .bathroom-dry, .bathroom-wet, .entry-path').forEach(r => r.classList.remove('highlighted'));
+                this.classList.add('highlighted');
+            });
+        });
+    </script>
+</body>
+</html>
