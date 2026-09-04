@@ -1,4 +1,4 @@
-name: Adjust house plan v2
+name: Adjust house plan v3
 on:
   push:
     branches: [master]
@@ -11,8 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Adjust floor plan
-        shell: python
         run: |
+          python3 - <<'PY'
           from pathlib import Path
           import re
           p = Path('户型.html')
@@ -80,6 +80,7 @@ jobs:
           s = s.replace('公卫2.3m×4.2m(干湿分离) + 楼梯2.5m×4.2m + 餐厅5.6m×4.2m + 厨房3.55m×4.2m', '公卫2.3m×4.2m + 餐厅约5.55m×4.2m + 厨房3.55m×4.2m + 东北角楼梯2.5m×4.2m')
           s = s.replace('公卫门南侧靠东 + 洗澡间推拉玻璃门北侧 + 餐厅西侧门北侧靠北(通往楼梯下) + 餐厅南侧门靠东(厨房侧) + 厨房门东侧 + 卧室1门北侧靠东 + 卧室2门北侧靠西 + 入户门(南门中间)', '公卫门 + 洗澡间推拉玻璃门 + 餐厅最西侧门 + 厨房东侧门(楼梯旁) + 卧室门 + 入户门(南门中间)')
           p.write_text(s, encoding='utf-8')
+          PY
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
